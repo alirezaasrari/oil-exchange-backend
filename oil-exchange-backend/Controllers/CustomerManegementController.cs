@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using oil_exchange_backend.Models;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Services;
 
@@ -33,6 +34,13 @@ namespace oil_exchange_backend.Controllers
                     return BadRequest("bad request");
                 }
             }
+        }
+
+        [HttpGet("getcustomers")]
+        public async Task<ActionResult<List<CustomerManagement>>> getcustomers()
+        {
+            var Customers = _customerManegemantService.GetCustomers();
+            return Ok(Customers);
         }
     }
 }

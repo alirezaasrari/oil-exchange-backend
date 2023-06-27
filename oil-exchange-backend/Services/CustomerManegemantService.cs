@@ -12,6 +12,7 @@ namespace oil_exchange_backend.Services
         {
             _dataContext = context;
         }
+       
         public void AddCustomer(CustomerManagementVM customer)
         {
            CustomerManagement customerManegemant = new CustomerManagement();
@@ -31,5 +32,9 @@ namespace oil_exchange_backend.Services
             _dataContext.SaveChanges();
 
         }
-    }
+        public List<CustomerManagement> GetCustomers()
+        {
+            return _dataContext.customermanagement.ToList();
+        }
+}
 }

@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace oil_exchange_backend.Models.ViewModels
+namespace oil_exchange_backend.Models
 {
-    public class UserDtoVM
+    public class ResetPass
     {
-        public DateTime? registereddate { get; set; } = DateTime.Now;
-        [Required, Phone]
-        public string phonenumber { get; set; } = string.Empty;
-        public string storename { get; set; } = string.Empty;
+        [Required]
+        public string token { get; set; } = string.Empty;
+
         [Required, MinLength(6, ErrorMessage = "Please enter at least 6 charactor")]
         public string pass { get; set; } = string.Empty;
         [Required, Compare("pass")]

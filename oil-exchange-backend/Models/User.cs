@@ -7,6 +7,10 @@
         public string phonenumber { get; set; } = string.Empty;
         public string storename { get; set; } = string.Empty;
         public byte[] passHash { get; set; } = new byte[32];
-        public byte[] passSalt { get; set; } = new byte[32];    
+        public byte[] passSalt { get; set; } = new byte[32];
+        public string? token { get; set; } = string.Empty;
+        public string? passwordresettoken { get; set; } = string.Empty;
+        public DateTime? expiretoken { get; set; }
+
     }
 }

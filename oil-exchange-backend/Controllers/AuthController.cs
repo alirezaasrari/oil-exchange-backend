@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using oil_exchange_backend.Context;
-using oil_exchange_backend.Interfaces;
 using oil_exchange_backend.Models;
 using oil_exchange_backend.Models.ViewModels;
-using oil_exchange_backend.Services;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace oil_exchange_backend.Controllers
@@ -12,10 +15,12 @@ namespace oil_exchange_backend.Controllers
     [ApiController]
     public class AuthController : Controller
     {
-        private DataContext _Context { get; set; }
-        public AuthController(DataContext Context)
+        private DataContext _Context;
+        private readonly IConfiguration _Configuration;
+        public AuthController(DataContext Context, IConfiguration configurstion)
         {
             _Context = Context;
+            _Configuration = configurstion;
         }
         [HttpPost("register")]
         public async Task<ActionResult<UserVM>> Register(UserDtoVM request)
@@ -31,6 +36,54 @@ namespace oil_exchange_backend.Controllers
             _Context.SaveChanges();
             return Ok(_users);
         }
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(UserDto request)
+        {
+            var comparison = _Context.users.Any(req => req.storename == request.storename);
+
+            if (!comparison)
+            {
+                return BadRequest("User Not found!");
+            }
+            else if (comparison)
+            {
+                var comparison2 = _Context.users.FirstOrDefault(req => req.storename == request.storename);
+
+                byte[] Hash = comparison2.passHash;
+                byte[] Salt = comparison2.passSalt;
+                
+                if (!VerifyPasswordHash(request.pass, Hash, Salt))
+                {
+                    return BadRequest("password is wrong");
+                }
+            }
+            string token = CreateToken(request);
+            return Ok(token);
+
+        }
+
+        private string CreateToken(UserDto request)
+        {
+            var comparison2 = _Context.users.FirstOrDefault(req => req.storename == request.storename);
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim (ClaimTypes.Name, comparison2.storename)
+            };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _Configuration.GetSection("AppSettings:Token").Value));
+
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires:DateTime.Now.AddDays(1),
+                signingCredentials: cred
+                );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt; 
+        }
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new HMACSHA512())
@@ -44,27 +97,9 @@ namespace oil_exchange_backend.Controllers
             using (var hmac = new HMACSHA512(passwordSalt))
             {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(computedHash);
+                return computedHash.SequenceEqual(passwordHash);
             }
         }
 
-
     }
 }
-/*try
-{
-    _registerservice.Addusers(user);
-    return Ok();
-}
-catch (Exception ex)
-{
-    var ineerexception = ex.InnerException;
-    if (ineerexception != null)
-    {
-        return BadRequest(ineerexception.Message);
-    }
-    else
-    {
-        return BadRequest("bad request");
-    }
-}*/

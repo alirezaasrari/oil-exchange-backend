@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using oil_exchange_backend.Context;
@@ -21,6 +22,14 @@ namespace oil_exchange_backend.Controllers
             _Context = Context;
             _Configuration = configurstion;
         }
+        [HttpGet, Authorize]
+
+        public ActionResult<string> GetMe() {
+
+            var StorName = _Configuration;
+            return Ok(StorName);
+        }
+
         [HttpPost("register")]
         public async Task<ActionResult<UserVM>> Register(UserDtoVM request)
         {
@@ -101,28 +110,28 @@ namespace oil_exchange_backend.Controllers
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
 
-        private async Task<string> CreateToken(UserDto request)
-        {
-            var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.storename == request.storename);
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim (ClaimTypes.Name, comparison2.storename)
-            };
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _Configuration.GetSection("AppSettings:Token").Value));
+        //private async Task<string> CreateToken(UserDto request)
+        //{
+        //    var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.storename == request.storename);
+        //    List<Claim> claims = new List<Claim>
+        //    {
+        //        new Claim (ClaimTypes.Name, comparison2.storename)
+        //    };
+        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+        //        _Configuration.GetSection("AppSettings:Token").Value));
 
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        //    var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires:DateTime.Now.AddDays(1),
-                signingCredentials: cred
-                );
+        //    var token = new JwtSecurityToken(
+        //        claims: claims,
+        //        expires:DateTime.Now.AddDays(1),
+        //        signingCredentials: cred
+        //        );
 
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        //    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return jwt; 
-        }
+        //    return jwt; 
+        //}
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using oil_exchange_backend.Context;
@@ -16,20 +15,11 @@ namespace oil_exchange_backend.Controllers
     public class AuthController : Controller
     {
         private DataContext _Context;
-        private readonly IConfiguration _Configuration;
-        public AuthController(DataContext Context, IConfiguration configurstion)
+        public AuthController(DataContext Context)
         {
             _Context = Context;
-            _Configuration = configurstion;
         }
-        [HttpGet, Authorize]
-
-        public ActionResult<string> GetMe() {
-
-            var StorName = _Configuration;
-            return Ok(StorName);
-        }
-
+        
         [HttpPost("register")]
         public async Task<ActionResult<UserVM>> Register(UserDtoVM request)
         {
@@ -66,7 +56,7 @@ namespace oil_exchange_backend.Controllers
                     return BadRequest("password is wrong");
                 }
             }
-            string token = CreteRandomToken();
+            string token = await createtoken(user);
             user.expiretoken = DateTime.Now.AddDays(1);
             user.token = token;
             await _Context.SaveChangesAsync();
@@ -82,7 +72,7 @@ namespace oil_exchange_backend.Controllers
             {
                 return BadRequest("user not found!");
             }
-            user.passwordresettoken = CreteRandomToken();
+            user.passwordresettoken = await createtoken(user);
             user.expiretoken = DateTime.Now.AddDays(1);
             _Context.SaveChanges();
             return Ok("you can reset your password");
@@ -105,33 +95,31 @@ namespace oil_exchange_backend.Controllers
             return Ok("password successfully changed");
         }
 
-        private  string CreteRandomToken()
+
+
+        private async Task<string> createtoken(User request)
         {
-            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+            var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.storename == request.storename);
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim (ClaimTypes.Name, comparison2.storename),
+                new Claim (ClaimTypes.Role, "admin")
+
+            };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("hello hayat shargh"));
+
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: cred
+                );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
         }
-
-        //private async Task<string> CreateToken(UserDto request)
-        //{
-        //    var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.storename == request.storename);
-        //    List<Claim> claims = new List<Claim>
-        //    {
-        //        new Claim (ClaimTypes.Name, comparison2.storename)
-        //    };
-        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-        //        _Configuration.GetSection("AppSettings:Token").Value));
-
-        //    var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-        //    var token = new JwtSecurityToken(
-        //        claims: claims,
-        //        expires:DateTime.Now.AddDays(1),
-        //        signingCredentials: cred
-        //        );
-
-        //    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-        //    return jwt; 
-        //}
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

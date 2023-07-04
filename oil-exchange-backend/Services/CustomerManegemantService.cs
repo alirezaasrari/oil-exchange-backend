@@ -17,7 +17,7 @@ namespace oil_exchange_backend.Services
         {
            CustomerManagement customerManegemant = new CustomerManagement();
             customerManegemant.plaque = customer.plaque;
-            customerManegemant.userid = 1026;
+            customerManegemant.userid = customer.userid;
             customerManegemant.oilfilter = customer.oilfilter;  
             customerManegemant.gearboxoil = customer.gearboxoil;
             customerManegemant.airfilter = customer.airfilter;

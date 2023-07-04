@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using oil_exchange_backend.Models;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Services;
@@ -14,7 +15,7 @@ namespace oil_exchange_backend.Controllers
         {
             _customerManegemantService = customerManegemantService;
         }
-        [HttpPost("addcustomer")]
+        [HttpPost("addcustomer"), Authorize]
         public async Task<IActionResult> Addcustomer([FromBody] CustomerManagementVM customerManagement)
         {
             try

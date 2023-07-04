@@ -39,10 +39,9 @@ builder.Services.AddAuthentication(
         Options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSetings:Token").Value)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("hello hayat shargh")),
             ValidateIssuer = false,
             ValidateAudience = false,
-
         };
         });
 

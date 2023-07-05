@@ -9,5 +9,6 @@ namespace oil_exchange_backend.Context
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<User> users { get; set; }
         public DbSet<CustomerManagement> customermanagement { get; set; }
+        public DbSet<StoreManagement> Store { get; set; }
     }
 }

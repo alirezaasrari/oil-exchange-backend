@@ -15,7 +15,8 @@
         public string untifreez { get; set; } = string.Empty;
         public string previouskilometer { get; set; } = string.Empty;
         public string nextkilometer { get; set; } = string.Empty;
-        public int userid { get; set; } = 1026;
+        public int userid { get; set; }
+        public string? hydraulicoil { get; set; } = string.Empty;
 
     }
 }

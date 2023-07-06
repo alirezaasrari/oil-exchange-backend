@@ -22,7 +22,7 @@ namespace oil_exchange_backend.Controllers
             return Ok(newlist);
         }
 
-        private List<CustomerManagement> Search(List<CustomerManagement> list, string num)
+        private static List<CustomerManagement> Search(List<CustomerManagement> list, string num)
         {
             var newlist = new List<CustomerManagement>();
             foreach (CustomerManagement p in list) {

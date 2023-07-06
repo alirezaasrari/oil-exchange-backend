@@ -2,6 +2,7 @@
 using oil_exchange_backend.Context;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace oil_exchange_backend.Controllers
 {
@@ -15,7 +16,7 @@ namespace oil_exchange_backend.Controllers
             _Context = Context;
         }
         [HttpPost("addtostore")]
-        public async Task<ActionResult<UserVM>> AddToStore(StoreManagementVM request)
+        public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementVM request)
         {
             StoreManagement _storemanagement = new StoreManagement();
             _storemanagement.userid = request.userid;
@@ -51,9 +52,29 @@ namespace oil_exchange_backend.Controllers
             
            
             
-            await _Context.Store.AddAsync(_storemanagement);
-            _Context.SaveChanges();
+            _Context.Store.Add(_storemanagement);
+            await _Context.SaveChangesAsync();
             return Ok(_storemanagement);
+        }
+        [HttpGet("getstore")]
+        public async Task<ActionResult <List<StoreManagement>>> getstore(int request)
+        {
+            var store = await _Context.Store.ToListAsync();
+            var filterdlist = Search(store,request);
+            return Ok(filterdlist);
+        }
+
+        private static List<StoreManagement> Search(List<StoreManagement> list, int num)
+        {
+            var newlist = new List<StoreManagement>();
+            foreach (StoreManagement p in list)
+            {
+                if (p.userid == num)
+                {
+                    newlist.Add(p);
+                };
+            }
+            return newlist;
         }
     }
 }

@@ -30,8 +30,8 @@ namespace oil_exchange_backend.Controllers
             _users.registereddate = DateTime.Now;
             _users.passHash = passwordHash;
             _users.passSalt = passwordSalt;
-            await _Context.users.AddAsync(_users);
-            _Context.SaveChanges();
+            _Context.users.Add(_users);
+            await _Context.SaveChangesAsync();
             return Ok(_users);
         }
         [HttpPost("login")]

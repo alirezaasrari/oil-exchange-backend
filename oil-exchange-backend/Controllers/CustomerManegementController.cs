@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using oil_exchange_backend.Context;
 using oil_exchange_backend.Models;
 using oil_exchange_backend.Models.ViewModels;
@@ -18,7 +19,7 @@ namespace oil_exchange_backend.Controllers
         }
 
         [HttpPost("addcustomer"), Authorize]
-        public ActionResult<string> Addcustomer(CustomerManagementVM customer)
+        public async Task<ActionResult<string>> Addcustomer(CustomerManagementVM customer)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace oil_exchange_backend.Controllers
                 customerManegemant.untifreez = customer.untifreez;
                 customerManegemant.hydraulicoil = customer.hydraulicoil;
                 _dataContext.customermanagement.Add(customerManegemant);
-                _dataContext.SaveChanges();
+                await _dataContext.SaveChangesAsync();
                 return Ok("successfully");
             }
             catch (Exception ex)
@@ -55,9 +56,9 @@ namespace oil_exchange_backend.Controllers
         }
 
         [HttpGet("getcustomers")]
-        public ActionResult<List<CustomerManagement>> getcustomers()
+        public async Task<ActionResult<List<CustomerManagement>>> getcustomers()
         {
-            var Customers = _dataContext.customermanagement.ToList();
+            var Customers = await _dataContext.customermanagement.ToListAsync();
             return Ok(Customers);
         }
     }

@@ -2,7 +2,7 @@
 {
     public class UserDto
     {
-        public string storename { get; set; } = string.Empty;
-        public string pass { get; set; } = string.Empty;
+        public string Storename { get; set; } = string.Empty;
+        public string Pass { get; set; } = string.Empty;
     }
 }

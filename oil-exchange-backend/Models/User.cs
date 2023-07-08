@@ -2,15 +2,14 @@
 {
     public class User
     {
-        public int id { get; set; }
-        public DateTime? registereddate { get; set; } = DateTime.Now;
-        public string phonenumber { get; set; } = string.Empty;
-        public string storename { get; set; } = string.Empty;
-        public byte[] passHash { get; set; } = new byte[32];
-        public byte[] passSalt { get; set; } = new byte[32];
-        public string? token { get; set; } = string.Empty;
-        public string? passwordresettoken { get; set; } = string.Empty;
-        public DateTime? expiretoken { get; set; }
+        public int Id { get; set; }
+        public DateTime? Registereddate { get; set; } = DateTime.Now;
+        public string Phonenumber { get; set; } = string.Empty;
+        public string Storename { get; set; } = string.Empty;
+        public byte[] PassHash { get; set; } = new byte[32];
+        public byte[] PassSalt { get; set; } = new byte[32];
+        public string? Token { get; set; } = string.Empty;
+        public string? Passwordresettoken { get; set; } = string.Empty;
 
     }
 }

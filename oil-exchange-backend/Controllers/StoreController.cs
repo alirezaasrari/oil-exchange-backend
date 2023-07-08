@@ -3,6 +3,8 @@ using oil_exchange_backend.Context;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Cryptography.X509Certificates;
 
 namespace oil_exchange_backend.Controllers
 {
@@ -10,7 +12,7 @@ namespace oil_exchange_backend.Controllers
     [ApiController]
     public class StoreController : Controller
     {
-        private DataContext _Context;
+        private readonly DataContext _Context;
         public StoreController(DataContext Context)
         {
             _Context = Context;
@@ -18,46 +20,48 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("addtostore")]
         public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementVM request)
         {
-            StoreManagement _storemanagement = new StoreManagement();
-            _storemanagement.userid = request.userid;
-            _storemanagement.registereddate = request.registereddate;
+            StoreManagement _storemanagement = new()
+            {
+                userid = request.userid,
+                registereddate = request.registereddate,
 
-            _storemanagement.oilfilterselled = request.oilfilterselled;
-            _storemanagement.oilfilterbuyed = request.oilfilterbuyed;
+                oilfilterselled = request.oilfilterselled,
+                oilfilterbuyed = request.oilfilterbuyed,
 
-            _storemanagement.petrolfilterselled = request.petrolfilterselled;
-            _storemanagement.petrolfilterbuyed = request.petrolfilterbuyed;
+                petrolfilterselled = request.petrolfilterselled,
+                petrolfilterbuyed = request.petrolfilterbuyed,
 
-            _storemanagement.airfilterselled = request.airfilterselled; 
-            _storemanagement.airfilterbuyed = request.airfilterbuyed;
+                airfilterselled = request.airfilterselled,
+                airfilterbuyed = request.airfilterbuyed,
 
-            _storemanagement.cabinfilterselled = request.cabinfilterselled;
-            _storemanagement.cabinfilterbuyed = request.cabinfilterbuyed;
+                cabinfilterselled = request.cabinfilterselled,
+                cabinfilterbuyed = request.cabinfilterbuyed,
 
-            _storemanagement.breakeoilselled = request.breakeoilselled;
-            _storemanagement.breakeoilbuyed = request.breakeoilbuyed;
+                breakeoilselled = request.breakeoilselled,
+                breakeoilbuyed = request.breakeoilbuyed,
 
-            _storemanagement.engineoilselled = request.engineoilselled;
-            _storemanagement.engineoilbuyed = request.engineoilbuyed;
+                engineoilselled = request.engineoilselled,
+                engineoilbuyed = request.engineoilbuyed,
 
-            _storemanagement.untifreezselled = request.untifreezselled;
-            _storemanagement.untifreezbuyed = request.untifreezbuyed;
+                untifreezselled = request.untifreezselled,
+                untifreezbuyed = request.untifreezbuyed,
 
-            _storemanagement.hydraulicoilbuyed = request.hydraulicoilbuyed;
-            _storemanagement.hydraulicoilselled = request.hydraulicoilselled;
+                hydraulicoilbuyed = request.hydraulicoilbuyed,
+                hydraulicoilselled = request.hydraulicoilselled,
 
-            _storemanagement.gearboxoilselled = request.gearboxoilselled;
-            _storemanagement.gearboxoilbuyed = request.gearboxoilbuyed;
-           
-            
-           
-            
+                gearboxoilselled = request.gearboxoilselled,
+                gearboxoilbuyed = request.gearboxoilbuyed
+            };
+
+
+
+
             _Context.Store.Add(_storemanagement);
             await _Context.SaveChangesAsync();
             return Ok(_storemanagement);
         }
         [HttpGet("getstore")]
-        public async Task<ActionResult <List<StoreManagement>>> getstore(int request)
+        public async Task<ActionResult <List<StoreManagement>>> Getstore(int request)
         {
             var store = await _Context.Store.ToListAsync();
             var filterdlist = Search(store,request);
@@ -75,6 +79,17 @@ namespace oil_exchange_backend.Controllers
                 };
             }
             return newlist;
+        }
+        [HttpGet("getstorename")]
+        public async Task<ActionResult<string>> GetStoreName(string token)
+        {
+            var tokencheck = await _Context.users.FirstOrDefaultAsync(a => a.Token == token);
+            if (tokencheck == null)
+            {
+                return NotFound("user doesnt exist");
+            }
+            var storename = tokencheck.Storename;
+            return Ok(storename);
         }
     }
 }

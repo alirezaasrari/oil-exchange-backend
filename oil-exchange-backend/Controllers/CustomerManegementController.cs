@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using oil_exchange_backend.Context;
 using oil_exchange_backend.Models;
@@ -18,25 +17,27 @@ namespace oil_exchange_backend.Controllers
             _dataContext = context;
         }
 
-        [HttpPost("addcustomer"), Authorize]
+        [HttpPost("addcustomer")]
         public async Task<ActionResult<string>> Addcustomer(CustomerManagementVM customer)
         {
             try
             {
-                CustomerManagement customerManegemant = new CustomerManagement();
-                customerManegemant.plaque = customer.plaque;
-                customerManegemant.userid = customer.userid;
-                customerManegemant.oilfilter = customer.oilfilter;
-                customerManegemant.gearboxoil = customer.gearboxoil;
-                customerManegemant.airfilter = customer.airfilter;
-                customerManegemant.breakeoil = customer.breakeoil;
-                customerManegemant.cabinfilter = customer.cabinfilter;
-                customerManegemant.engineoil = customer.engineoil;
-                customerManegemant.previouskilometer = customer.previouskilometer;
-                customerManegemant.nextkilometer = customer.nextkilometer;
-                customerManegemant.petrolfilter = customer.petrolfilter;
-                customerManegemant.untifreez = customer.untifreez;
-                customerManegemant.hydraulicoil = customer.hydraulicoil;
+                CustomerManagement customerManegemant = new()
+                {
+                    plaque = customer.plaque,
+                    userid = customer.userid,
+                    oilfilter = customer.oilfilter,
+                    gearboxoil = customer.gearboxoil,
+                    airfilter = customer.airfilter,
+                    breakeoil = customer.breakeoil,
+                    cabinfilter = customer.cabinfilter,
+                    engineoil = customer.engineoil,
+                    previouskilometer = customer.previouskilometer,
+                    nextkilometer = customer.nextkilometer,
+                    petrolfilter = customer.petrolfilter,
+                    untifreez = customer.untifreez,
+                    hydraulicoil = customer.hydraulicoil
+                };
                 _dataContext.customermanagement.Add(customerManegemant);
                 await _dataContext.SaveChangesAsync();
                 return Ok("successfully");
@@ -54,11 +55,21 @@ namespace oil_exchange_backend.Controllers
                 }
             }
         }
+        [HttpGet("get-userid")]
+        public async Task<ActionResult<int>> Userid(string storename)
+        {
+            var user = await _dataContext.users.FirstOrDefaultAsync(req => req.Storename == storename);
+            if (user is not null)
+            {
+                var id = user.Id;
+                return Ok(id);
+            }else { return BadRequest(0); }
+        }
 
         [HttpGet("getcustomers")]
-        public async Task<ActionResult<List<CustomerManagement>>> getcustomers()
+        public async Task<ActionResult<List<CustomerManagement>>> Getcustomers(int userid)
         {
-            var Customers = await _dataContext.customermanagement.ToListAsync();
+            var Customers = await _dataContext.customermanagement.Where(req => req.userid == userid).ToListAsync();
             return Ok(Customers);
         }
     }

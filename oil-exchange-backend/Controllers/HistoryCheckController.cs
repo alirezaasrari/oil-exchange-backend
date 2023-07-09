@@ -9,7 +9,7 @@ namespace oil_exchange_backend.Controllers
     [ApiController]
     public class HistoryCheckController : Controller
     {
-        private DataContext _Context;
+        private readonly DataContext _Context;
         public HistoryCheckController(DataContext Context)
         {
             _Context = Context;
@@ -17,7 +17,7 @@ namespace oil_exchange_backend.Controllers
         [HttpGet("historycheck")]
         public async Task<ActionResult<List<CustomerManagement>>> HistoryCheck(string plaquenumber)
         {
-            var history = await _Context.customermanagement.ToListAsync();
+            var history = await _Context.Customermanagement.ToListAsync();
             var newlist = Search(history, plaquenumber);
             return Ok(newlist);
         }
@@ -26,7 +26,7 @@ namespace oil_exchange_backend.Controllers
         {
             var newlist = new List<CustomerManagement>();
             foreach (CustomerManagement p in list) {
-                if(p.plaque == num)
+                if(p.Plaque == num)
                 {
                     newlist.Add(p);
                 };

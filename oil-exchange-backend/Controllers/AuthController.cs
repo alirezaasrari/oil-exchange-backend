@@ -24,26 +24,26 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserVM>> Register(UserDtoVM request)
         {
-            CreatePasswordHash(request.pass, out byte[] passwordHash, out byte[] passwordSalt);
+            CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
             User _users = new()
             {
-                Storename = request.storename,
-                Phonenumber = request.phonenumber,
+                Storename = request.Storename,
+                Phonenumber = request.Phonenumber,
                 Registereddate = DateTime.Now,
                 PassHash = passwordHash,
                 PassSalt = passwordSalt
             };
-            _Context.users.Add(_users);
+            _Context.Users.Add(_users);
             await _Context.SaveChangesAsync();
             return Ok(_users);
         }
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserDto request)
         {
-            var user = await _Context.users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
+            var user = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
             if (user is not null)
             {
-                var comparison = await _Context.users.AnyAsync(req => req.Storename == request.Storename);
+                var comparison = await _Context.Users.AnyAsync(req => req.Storename == request.Storename);
 
                 if (!comparison)
                 {
@@ -51,7 +51,7 @@ namespace oil_exchange_backend.Controllers
                 }
                 else if (comparison)
                 {
-                    var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
+                    var comparison2 = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
                     if (comparison2 is not null)
                     {
                         byte[] Hash = comparison2.PassHash;
@@ -74,7 +74,7 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("forget-password")]
         public async Task<IActionResult> ForgetPassword(string storename)
         {
-            var user = await _Context.users.FirstOrDefaultAsync(u => u.Storename == storename);
+            var user = await _Context.Users.FirstOrDefaultAsync(u => u.Storename == storename);
             if (user == null)
             {
                 return BadRequest("user not found!");
@@ -87,12 +87,12 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("Reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPass request)
         {
-            var user = await _Context.users.FirstOrDefaultAsync(u => u.Passwordresettoken == request.token);
+            var user = await _Context.Users.FirstOrDefaultAsync(u => u.Passwordresettoken == request.Token);
             //if (user == null || user.expiretoken < DateTime.Now)
             //{
             //    return BadRequest("invalid token ");
             //}
-            CreatePasswordHash(request.pass, out byte[] passwordHash, out byte[] passwordSalt);
+            CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
             if (user is not null)
             {
                 user.PassHash = passwordHash;
@@ -108,13 +108,13 @@ namespace oil_exchange_backend.Controllers
 
         private async Task<string> Createtoken(User request)
         {
-            var comparison2 = await _Context.users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
+            var comparison2 = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
             if (comparison2 is not null)
             {
                 List<Claim> claims = new()
             {
                 new Claim (ClaimTypes.Name, comparison2.Storename),
-                new Claim (ClaimTypes.Role, "admin")
+                new Claim (ClaimTypes.Role, "admin"),
             };
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("hello hayat shargh"));
 

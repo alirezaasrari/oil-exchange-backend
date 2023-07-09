@@ -24,21 +24,21 @@ namespace oil_exchange_backend.Controllers
             {
                 CustomerManagement customerManegemant = new()
                 {
-                    plaque = customer.plaque,
-                    userid = customer.userid,
-                    oilfilter = customer.oilfilter,
-                    gearboxoil = customer.gearboxoil,
-                    airfilter = customer.airfilter,
-                    breakeoil = customer.breakeoil,
-                    cabinfilter = customer.cabinfilter,
-                    engineoil = customer.engineoil,
-                    previouskilometer = customer.previouskilometer,
-                    nextkilometer = customer.nextkilometer,
-                    petrolfilter = customer.petrolfilter,
-                    untifreez = customer.untifreez,
-                    hydraulicoil = customer.hydraulicoil
+                    Plaque = customer.Plaque,
+                    Userid = customer.Userid,
+                    Oilfilter = customer.Oilfilter,
+                    Gearboxoil = customer.Gearboxoil,
+                    Airfilter = customer.Airfilter,
+                    Breakeoil = customer.Breakeoil,
+                    Cabinfilter = customer.Cabinfilter,
+                    Engineoil = customer.Engineoil,
+                    Previouskilometer = customer.Previouskilometer,
+                    Nextkilometer = customer.Nextkilometer,
+                    Petrolfilter = customer.Petrolfilter,
+                    Untifreez = customer.Untifreez,
+                    Hydraulicoil = customer.Hydraulicoil
                 };
-                _dataContext.customermanagement.Add(customerManegemant);
+                _dataContext.Customermanagement.Add(customerManegemant);
                 await _dataContext.SaveChangesAsync();
                 return Ok("successfully");
             }
@@ -58,7 +58,7 @@ namespace oil_exchange_backend.Controllers
         [HttpGet("get-userid")]
         public async Task<ActionResult<int>> Userid(string storename)
         {
-            var user = await _dataContext.users.FirstOrDefaultAsync(req => req.Storename == storename);
+            var user = await _dataContext.Users.FirstOrDefaultAsync(req => req.Storename == storename);
             if (user is not null)
             {
                 var id = user.Id;
@@ -69,7 +69,7 @@ namespace oil_exchange_backend.Controllers
         [HttpGet("getcustomers")]
         public async Task<ActionResult<List<CustomerManagement>>> Getcustomers(int userid)
         {
-            var Customers = await _dataContext.customermanagement.Where(req => req.userid == userid).ToListAsync();
+            var Customers = await _dataContext.Customermanagement.Where(req => req.Userid == userid).ToListAsync();
             return Ok(Customers);
         }
     }

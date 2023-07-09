@@ -2,21 +2,21 @@
 {
     public class CustomerManagement
     {
-        public int id { get; set; }
-        public string plaque { get; set; } = string.Empty;
-        public DateTime servicedate { get; set; } = DateTime.Now;
-        public string engineoil { get; set; } = string.Empty;
-        public string gearboxoil { get; set; } = string.Empty;
-        public string cabinfilter { get; set; } = string.Empty;
-        public string oilfilter { get; set; } = string.Empty;
-        public string airfilter { get; set; } = string.Empty;
-        public string petrolfilter { get; set; } = string.Empty;
-        public string breakeoil { get; set; } = string.Empty;
-        public string untifreez { get; set; } = string.Empty;
-        public string previouskilometer { get; set; } = string.Empty;
-        public string nextkilometer { get; set; } = string.Empty;
-        public int userid { get; set; }
-        public string? hydraulicoil { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string Plaque { get; set; } = string.Empty;
+        public DateTime Servicedate { get; set; } = DateTime.Now;
+        public string Engineoil { get; set; } = string.Empty;
+        public string Gearboxoil { get; set; } = string.Empty;
+        public string Cabinfilter { get; set; } = string.Empty;
+        public string Oilfilter { get; set; } = string.Empty;
+        public string Airfilter { get; set; } = string.Empty;
+        public string Petrolfilter { get; set; } = string.Empty;
+        public string Breakeoil { get; set; } = string.Empty;
+        public string Untifreez { get; set; } = string.Empty;
+        public string Previouskilometer { get; set; } = string.Empty;
+        public string Nextkilometer { get; set; } = string.Empty;
+        public string? Hydraulicoil { get; set; } = string.Empty;
+        public int Userid { get; set; }
 
     }
 }

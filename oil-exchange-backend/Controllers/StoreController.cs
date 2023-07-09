@@ -22,35 +22,35 @@ namespace oil_exchange_backend.Controllers
         {
             StoreManagement _storemanagement = new()
             {
-                userid = request.userid,
-                registereddate = request.registereddate,
+                Userid = request.Userid,
+                Registereddate = request.Registereddate,
 
-                oilfilterselled = request.oilfilterselled,
-                oilfilterbuyed = request.oilfilterbuyed,
+                Oilfilterselled = request.Oilfilterselled,
+                Oilfilterbuyed = request.Oilfilterbuyed,
 
-                petrolfilterselled = request.petrolfilterselled,
-                petrolfilterbuyed = request.petrolfilterbuyed,
+                Petrolfilterselled = request.Petrolfilterselled,
+                Petrolfilterbuyed = request.Petrolfilterbuyed,
 
-                airfilterselled = request.airfilterselled,
-                airfilterbuyed = request.airfilterbuyed,
+                Airfilterselled = request.Airfilterselled,
+                Airfilterbuyed = request.Airfilterbuyed,
 
-                cabinfilterselled = request.cabinfilterselled,
-                cabinfilterbuyed = request.cabinfilterbuyed,
+                Cabinfilterselled = request.Cabinfilterselled,
+                Cabinfilterbuyed = request.Cabinfilterbuyed,
 
-                breakeoilselled = request.breakeoilselled,
-                breakeoilbuyed = request.breakeoilbuyed,
+                Breakeoilselled = request.Breakeoilselled,
+                Breakeoilbuyed = request.Breakeoilbuyed,
 
-                engineoilselled = request.engineoilselled,
-                engineoilbuyed = request.engineoilbuyed,
+                Engineoilselled = request.Engineoilselled,
+                Engineoilbuyed = request.Engineoilbuyed,
 
-                untifreezselled = request.untifreezselled,
-                untifreezbuyed = request.untifreezbuyed,
+                Untifreezselled = request.Untifreezselled,
+                Untifreezbuyed = request.Untifreezbuyed,
 
-                hydraulicoilbuyed = request.hydraulicoilbuyed,
-                hydraulicoilselled = request.hydraulicoilselled,
+                Hydraulicoilbuyed = request.Hydraulicoilbuyed,
+                Hydraulicoilselled = request.Hydraulicoilselled,
 
-                gearboxoilselled = request.gearboxoilselled,
-                gearboxoilbuyed = request.gearboxoilbuyed
+                Gearboxoilselled = request.Gearboxoilselled,
+                Gearboxoilbuyed = request.Gearboxoilbuyed
             };
 
 
@@ -73,7 +73,7 @@ namespace oil_exchange_backend.Controllers
             var newlist = new List<StoreManagement>();
             foreach (StoreManagement p in list)
             {
-                if (p.userid == num)
+                if (p.Userid == num)
                 {
                     newlist.Add(p);
                 };
@@ -83,7 +83,7 @@ namespace oil_exchange_backend.Controllers
         [HttpGet("getstorename")]
         public async Task<ActionResult<string>> GetStoreName(string token)
         {
-            var tokencheck = await _Context.users.FirstOrDefaultAsync(a => a.Token == token);
+            var tokencheck = await _Context.Users.FirstOrDefaultAsync(a => a.Token == token);
             if (tokencheck == null)
             {
                 return NotFound("user doesnt exist");

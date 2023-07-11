@@ -58,19 +58,55 @@ namespace oil_exchange_backend.Controllers
         [HttpGet("get-userid")]
         public async Task<ActionResult<int>> Userid(string storename)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(req => req.Storename == storename);
-            if (user is not null)
+            try
             {
-                var id = user.Id;
-                return Ok(id);
-            }else { return BadRequest(0); }
+                var user = await _dataContext.Users.FirstOrDefaultAsync(req => req.Storename == storename);
+                if (user is not null)
+                {
+                    var id = user.Id;
+                    return Ok(id);
+                }
+                else { return BadRequest(0);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                }
+            }
+            
         }
 
         [HttpGet("getcustomers")]
         public async Task<ActionResult<List<CustomerManagement>>> Getcustomers(int userid)
         {
-            var Customers = await _dataContext.Customermanagement.Where(req => req.Userid == userid).ToListAsync();
-            return Ok(Customers);
+            try
+            {
+                var Customers = await _dataContext.Customermanagement.Where(req => req.Userid == userid).ToListAsync();
+                return Ok(Customers);
+            }
+            catch (Exception ex)
+            {
+
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                }
+            }
+            
         }
     }
     }

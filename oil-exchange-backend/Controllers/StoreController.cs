@@ -3,8 +3,6 @@ using oil_exchange_backend.Context;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Cryptography.X509Certificates;
 
 namespace oil_exchange_backend.Controllers
 {
@@ -20,65 +18,114 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("addtostore")]
         public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementVM request)
         {
-            StoreManagement _storemanagement = new()
+            try
             {
-                Userid = request.Userid,
-                Registereddate = request.Registereddate,
+                StoreManagement _storemanagement = new()
+                {
+                    Userid = request.Userid,
+                    Registereddate = request.Registereddate,
 
-                Oilfilterselled = request.Oilfilterselled,
-                Oilfilterbuyed = request.Oilfilterbuyed,
+                    Oilfilterselled = request.Oilfilterselled,
+                    Oilfilterbuyed = request.Oilfilterbuyed,
 
-                Petrolfilterselled = request.Petrolfilterselled,
-                Petrolfilterbuyed = request.Petrolfilterbuyed,
+                    Petrolfilterselled = request.Petrolfilterselled,
+                    Petrolfilterbuyed = request.Petrolfilterbuyed,
 
-                Airfilterselled = request.Airfilterselled,
-                Airfilterbuyed = request.Airfilterbuyed,
+                    Airfilterselled = request.Airfilterselled,
+                    Airfilterbuyed = request.Airfilterbuyed,
 
-                Cabinfilterselled = request.Cabinfilterselled,
-                Cabinfilterbuyed = request.Cabinfilterbuyed,
+                    Cabinfilterselled = request.Cabinfilterselled,
+                    Cabinfilterbuyed = request.Cabinfilterbuyed,
 
-                Breakeoilselled = request.Breakeoilselled,
-                Breakeoilbuyed = request.Breakeoilbuyed,
+                    Breakeoilselled = request.Breakeoilselled,
+                    Breakeoilbuyed = request.Breakeoilbuyed,
 
-                Engineoilselled = request.Engineoilselled,
-                Engineoilbuyed = request.Engineoilbuyed,
+                    Engineoilselled = request.Engineoilselled,
+                    Engineoilbuyed = request.Engineoilbuyed,
 
-                Untifreezselled = request.Untifreezselled,
-                Untifreezbuyed = request.Untifreezbuyed,
+                    Untifreezselled = request.Untifreezselled,
+                    Untifreezbuyed = request.Untifreezbuyed,
 
-                Hydraulicoilbuyed = request.Hydraulicoilbuyed,
-                Hydraulicoilselled = request.Hydraulicoilselled,
+                    Hydraulicoilbuyed = request.Hydraulicoilbuyed,
+                    Hydraulicoilselled = request.Hydraulicoilselled,
 
-                Gearboxoilselled = request.Gearboxoilselled,
-                Gearboxoilbuyed = request.Gearboxoilbuyed
-            };
+                    Gearboxoilselled = request.Gearboxoilselled,
+                    Gearboxoilbuyed = request.Gearboxoilbuyed
+                };
+                _Context.Store.Add(_storemanagement);
+                await _Context.SaveChangesAsync();
+                return Ok(_storemanagement);
+            }
+            catch (Exception ex)
+            {
 
-
-
-
-            _Context.Store.Add(_storemanagement);
-            await _Context.SaveChangesAsync();
-            return Ok(_storemanagement);
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                };
+            }
+            
         }
         [HttpGet("getstore")]
         public async Task<ActionResult <List<StoreManagement>>> Getstore(int request)
         {
-            var store = await _Context.Store.ToListAsync();
-            var filterdlist = Search(store,request);
-            return Ok(filterdlist);
+            try
+            {
+                var store = await _Context.Store.ToListAsync();
+                var filterdlist = Search(store, request);
+                return Ok(filterdlist);
+            }
+            catch (Exception ex)
+            {
+
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                };
+            }
+            
         }
 
         private static List<StoreManagement> Search(List<StoreManagement> list, int num)
         {
-            var newlist = new List<StoreManagement>();
-            foreach (StoreManagement p in list)
+            try
             {
-                if (p.Userid == num)
+                var newlist = new List<StoreManagement>();
+                foreach (StoreManagement p in list)
                 {
-                    newlist.Add(p);
-                };
+                    if (p.Userid == num)
+                    {
+                        newlist.Add(p);
+                    };
+                }
+                return newlist;
             }
-            return newlist;
+            catch (Exception ex)
+            {
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                     Console.WriteLine(ineerexception.Message);
+                    return new List<StoreManagement>();
+                }
+                else
+                {
+                     Console.WriteLine("bad request");
+                    return new List<StoreManagement>();
+                };
+
+            }
+            
         }
         [HttpGet("getstorename")]
         public async Task<ActionResult<string>> GetStoreName(string token)

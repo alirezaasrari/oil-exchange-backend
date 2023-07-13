@@ -30,7 +30,7 @@ namespace oil_exchange_backend.Controllers
                     return BadRequest("user already exist");
                 }
                 CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
-                RegisterUser users = new()
+                RegisterUser user = new()
                 {
                     Storename = request.Storename,
                     Phonenumber = request.Phonenumber,
@@ -38,9 +38,9 @@ namespace oil_exchange_backend.Controllers
                     PassHash = passwordHash,
                     PassSalt = passwordSalt
                 };
-                _Context.Users.Add(users);
+                _Context.Users.Add(user);
                 await _Context.SaveChangesAsync();
-                return Ok(users);
+                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -99,7 +99,7 @@ namespace oil_exchange_backend.Controllers
         }
 
         [HttpPost("forget-password")]
-        public async Task<IActionResult> ForgetPassword(int phone)
+        public async Task<IActionResult> ForgetPassword(string phone)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Phonenumber == phone);
             try

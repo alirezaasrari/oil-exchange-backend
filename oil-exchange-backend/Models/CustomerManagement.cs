@@ -16,7 +16,7 @@
         public string Previouskilometer { get; set; } = string.Empty;
         public string Nextkilometer { get; set; } = string.Empty;
         public string? Hydraulicoil { get; set; } = string.Empty;
-        public int Userid { get; set; }
+        public int Userid { get; set; } = 0;
 
     }
 }

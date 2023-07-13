@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen(
 
         option.OperationFilter<SecurityRequirementsOperationFilter>();
     });
+ 
 
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(Options => {
@@ -41,13 +42,10 @@ builder.Services.AddAuthentication(
             ValidateAudience = false,
         };
         });
-
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
-
 
 builder.Services.AddCors(options =>
 {

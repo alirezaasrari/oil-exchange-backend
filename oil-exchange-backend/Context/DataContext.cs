@@ -7,7 +7,7 @@ namespace oil_exchange_backend.Context
     public class DataContext: DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-        public DbSet<User> Users { get; set; }
+        public DbSet<RegisterUser> Users { get; set; }
         public DbSet<CustomerManagement> Customermanagement { get; set; }
         public DbSet<StoreManagement> Store { get; set; }
     }

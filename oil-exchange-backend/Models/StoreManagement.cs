@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public DateTime Registereddate { get; set; } = DateTime.Now;
-        public int Userid { get; set; }
+        public int Userid { get; set; } = 0;
 
         public int Engineoilbuyed { get; set; } = 0;
         public int Engineoilselled { get; set; } = 0;

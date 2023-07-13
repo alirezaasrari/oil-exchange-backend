@@ -4,6 +4,6 @@ namespace oil_exchange_backend.Interfaces
 {
     public interface IRegisterservice
     {
-        public void Addusers(UserVM user);
+        public void Addusers(LoginUserDto user);
     }
 }

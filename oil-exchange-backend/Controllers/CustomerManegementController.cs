@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using oil_exchange_backend.Context;
 using oil_exchange_backend.Models;
@@ -17,8 +18,8 @@ namespace oil_exchange_backend.Controllers
             _dataContext = context;
         }
 
-        [HttpPost("addcustomer")]
-        public async Task<ActionResult<string>> Addcustomer(CustomerManagementVM customer)
+        [HttpPost("addcustomer"), Authorize]
+        public async Task<ActionResult<string>> Addcustomer(CustomerManagementDto customer)
         {
             try
             {
@@ -55,7 +56,7 @@ namespace oil_exchange_backend.Controllers
                 }
             }
         }
-        [HttpGet("get-userid")]
+        [HttpGet("get-userid"), Authorize]
         public async Task<ActionResult<int>> Userid(string storename)
         {
             try
@@ -85,7 +86,7 @@ namespace oil_exchange_backend.Controllers
             
         }
 
-        [HttpGet("getcustomers")]
+        [HttpGet("getcustomers"), Authorize]
         public async Task<ActionResult<List<CustomerManagement>>> Getcustomers(int userid)
         {
             try

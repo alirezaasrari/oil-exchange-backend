@@ -3,6 +3,7 @@ using oil_exchange_backend.Context;
 using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace oil_exchange_backend.Controllers
 {
@@ -15,15 +16,15 @@ namespace oil_exchange_backend.Controllers
         {
             _Context = Context;
         }
-        [HttpPost("addtostore")]
-        public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementVM request)
+        [HttpPost("addtostore"), Authorize]
+        public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementDto request)
         {
             try
             {
                 StoreManagement _storemanagement = new()
                 {
                     Userid = request.Userid,
-                    Registereddate = request.Registereddate,
+                    Registereddate = DateTime.Now,
 
                     Oilfilterselled = request.Oilfilterselled,
                     Oilfilterbuyed = request.Oilfilterbuyed,
@@ -71,7 +72,7 @@ namespace oil_exchange_backend.Controllers
             }
             
         }
-        [HttpGet("getstore")]
+        [HttpGet("getstore"), Authorize]
         public async Task<ActionResult <List<StoreManagement>>> Getstore(int request)
         {
             try

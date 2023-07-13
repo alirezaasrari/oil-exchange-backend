@@ -1,10 +1,8 @@
 ﻿namespace oil_exchange_backend.Models.ViewModels
 {
-    public class StoreManagementVM
+    public class StoreManagementDto
     {
-        public DateTime Registereddate { get; set; } = DateTime.Now;
         public int Userid { get; set; }
-
 
         public int Engineoilbuyed { get; set; } = 0;
         public int Engineoilselled { get; set; } = 0;

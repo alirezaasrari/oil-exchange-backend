@@ -1,8 +1,8 @@
 ﻿namespace oil_exchange_backend.Models
 {
-    public class UserDto
+    public class LoginUser
     {
-        public string Storename { get; set; } = string.Empty;
+        public int Phonenumber { get; set; } = 0;
         public string Pass { get; set; } = string.Empty;
     }
 }

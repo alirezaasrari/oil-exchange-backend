@@ -21,12 +21,16 @@ namespace oil_exchange_backend.Controllers
         }
         
         [HttpPost("register")]
-        public async Task<ActionResult<UserVM>> Register(UserDtoVM request)
+        public async Task<ActionResult<RegisterUser>> Register(RegisterUserDto request)
         {
             try
             {
+                if(_Context.Users.Any(res => res.Phonenumber == request.Phonenumber))
+                {
+                    return BadRequest("user already exist");
+                }
                 CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
-                User _users = new()
+                RegisterUser users = new()
                 {
                     Storename = request.Storename,
                     Phonenumber = request.Phonenumber,
@@ -34,9 +38,9 @@ namespace oil_exchange_backend.Controllers
                     PassHash = passwordHash,
                     PassSalt = passwordSalt
                 };
-                _Context.Users.Add(_users);
+                _Context.Users.Add(users);
                 await _Context.SaveChangesAsync();
-                return Ok(_users);
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -53,40 +57,30 @@ namespace oil_exchange_backend.Controllers
             }
         }
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(LoginUser request)
         {
+            var user = await _Context.Users.FirstOrDefaultAsync(res => res.Phonenumber == request.Phonenumber);
             try
-            {
-                var user = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
-                if (user is not null)
-                {
-                    var comparison = await _Context.Users.AnyAsync(req => req.Storename == request.Storename);
-
-                    if (!comparison)
+            {                
+                    if (user is null)
                     {
                         return BadRequest("User Not found!");
                     }
-                    else if (comparison)
-                    {
-                        var comparison2 = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
-                        if (comparison2 is not null)
-                        {
-                            byte[] Hash = comparison2.PassHash;
-                            byte[] Salt = comparison2.PassSalt;
+                    else if (user is not null)
+                    { 
+                            byte[] Hash = user.PassHash;
+                            byte[] Salt = user.PassSalt;
 
                             if (!VerifyPasswordHash(request.Pass, Hash, Salt))
                             {
                                 return BadRequest("password is wrong");
                             }
-                        }
-                        string token = await Createtoken(user);
-                        user.Token = token;
-                        await _Context.SaveChangesAsync();
-                        return Ok(token);
-                    }
-                    else { return BadRequest("user not found"); }
+                    var token = Createtoken(user);
+                    user.Token = token;
+                    await _Context.SaveChangesAsync();
+                    return Ok(token);
                 }
-                else { return BadRequest("user not found"); }
+                return BadRequest("some error exist");
             }
             catch (Exception ex)
             {
@@ -105,17 +99,18 @@ namespace oil_exchange_backend.Controllers
         }
 
         [HttpPost("forget-password")]
-        public async Task<IActionResult> ForgetPassword(string storename)
+        public async Task<IActionResult> ForgetPassword(int phone)
         {
+            var user = await _Context.Users.FirstOrDefaultAsync(u => u.Phonenumber == phone);
             try
             {
-                var user = await _Context.Users.FirstOrDefaultAsync(u => u.Storename == storename);
                 if (user == null)
                 {
                     return BadRequest("user not found!");
                 }
-                user.Passwordresettoken = await Createtoken(user);
-                _Context.SaveChanges();
+                user.Resetpasstoken = CreateRandomToken();
+                user.Resetpasstokenexpire = DateTime.Now.AddDays(1);
+                await _Context.SaveChangesAsync();
                 return Ok("you can reset your password");
             }
             catch (Exception ex)
@@ -137,21 +132,21 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("Reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPass request)
         {
+            var user = await _Context.Users.FirstOrDefaultAsync(u => u.Resetpasstoken == request.Token);
             try
-            {
-                var user = await _Context.Users.FirstOrDefaultAsync(u => u.Passwordresettoken == request.Token);
-                //if (user == null || user.expiretoken < DateTime.Now)
-                //{
-                //    return BadRequest("invalid token ");
-                //}
+            {  
+                if (user == null || user.Resetpasstokenexpire < DateTime.Now)
+                {
+                    return BadRequest("invalid token");
+                }
                 CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
                 if (user is not null)
                 {
                     user.PassHash = passwordHash;
                     user.PassSalt = passwordSalt;
-                    user.Passwordresettoken = null;
+                    user.Resetpasstoken = null;
+                    user.Resetpasstokenexpire = null;
                 }
-                //user.expiretoken = null;
                 await _Context.SaveChangesAsync();
                 return Ok("password successfully changed");
             }
@@ -171,52 +166,26 @@ namespace oil_exchange_backend.Controllers
             
         }
 
-
-
-        private async Task<string> Createtoken(User request)
+        private static string CreateRandomToken()
         {
-            try
-            {
-                var comparison2 = await _Context.Users.FirstOrDefaultAsync(req => req.Storename == request.Storename);
-                if (comparison2 is not null)
-                {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        }
+        private static string Createtoken(RegisterUser request)
+        {
                     List<Claim> claims = new()
-            {
-                new Claim (ClaimTypes.Name, comparison2.Storename),
-                new Claim (ClaimTypes.Role, "admin"),
-            };
+                    {
+                       new Claim (ClaimTypes.Name, request.Storename),
+                       new Claim (ClaimTypes.Role, "admin"),
+                    };
                     var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("hello hayat shargh"));
-
                     var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
                     var token = new JwtSecurityToken(
                         claims: claims,
                         expires: DateTime.Now.AddDays(1),
                         signingCredentials: cred
                         );
-
                     var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
                     return jwt;
-                }
-                else { return ""; }
-            }
-            catch (Exception ex)
-            {
-
-                var ineerexception = ex.InnerException;
-                if (ineerexception != null)
-                {
-                     Console.WriteLine(ineerexception.Message);
-                    return "";
-                }
-                else
-                {
-                     Console.WriteLine("bad request");
-                    return "";
-                };
-            }
-
         }
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

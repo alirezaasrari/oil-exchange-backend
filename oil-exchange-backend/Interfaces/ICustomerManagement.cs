@@ -5,7 +5,7 @@ namespace oil_exchange_backend.Interfaces
 {
     public interface ICustomerManagement
     {
-        public void AddCustomer(CustomerManagementVM customer);
+        public void AddCustomer(CustomerManagementDto customer);
         public List<CustomerManagement> GetCustomers();
     }
 }

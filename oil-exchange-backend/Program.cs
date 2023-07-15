@@ -42,6 +42,7 @@ builder.Services.AddAuthentication(
             ValidateAudience = false,
         };
         });
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

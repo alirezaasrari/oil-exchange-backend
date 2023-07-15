@@ -174,7 +174,7 @@ namespace oil_exchange_backend.Controllers
         {
                     List<Claim> claims = new()
                     {
-                       new Claim (ClaimTypes.Name, request.Storename),
+                       new Claim (ClaimTypes.Name, request.Id.ToString()),
                        new Claim (ClaimTypes.Role, "admin"),
                     };
                     var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("hello hayat shargh"));

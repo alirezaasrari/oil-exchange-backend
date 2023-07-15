@@ -128,16 +128,29 @@ namespace oil_exchange_backend.Controllers
             }
             
         }
-        [HttpGet("getstorename")]
-        public async Task<ActionResult<string>> GetStoreName(string token)
+
+        [HttpGet("getstorename"),Authorize]
+        public async Task<ActionResult<int>> GetStoreName(int request)
+        {
+            var idcheck = await _Context.Users.FirstOrDefaultAsync(a => a.Id == request);
+            if (idcheck == null)
+            {
+                return NotFound("user doesnt exist");
+            }
+            var storename = idcheck.Storename;
+            return Ok(storename);
+        }
+
+        [HttpGet("get-userid"),Authorize]
+        public async Task<ActionResult<int>> GetUserid(string token)
         {
             var tokencheck = await _Context.Users.FirstOrDefaultAsync(a => a.Token == token);
             if (tokencheck == null)
             {
                 return NotFound("user doesnt exist");
             }
-            var storename = tokencheck.Storename;
-            return Ok(storename);
+            var userid = tokencheck.Id;
+            return Ok(userid);
         }
     }
 }

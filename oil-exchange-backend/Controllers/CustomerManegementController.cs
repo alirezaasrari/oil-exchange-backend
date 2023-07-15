@@ -56,35 +56,6 @@ namespace oil_exchange_backend.Controllers
                 }
             }
         }
-        [HttpGet("get-userid"), Authorize]
-        public async Task<ActionResult<int>> Userid(string storename)
-        {
-            try
-            {
-                var user = await _dataContext.Users.FirstOrDefaultAsync(req => req.Storename == storename);
-                if (user is not null)
-                {
-                    var id = user.Id;
-                    return Ok(id);
-                }
-                else { return BadRequest(0);
-                }
-            }
-            catch (Exception ex)
-            {
-
-                var ineerexception = ex.InnerException;
-                if (ineerexception != null)
-                {
-                    return BadRequest(ineerexception.Message);
-                }
-                else
-                {
-                    return BadRequest("bad request");
-                }
-            }
-            
-        }
 
         [HttpGet("getcustomers"), Authorize]
         public async Task<ActionResult<List<CustomerManagement>>> Getcustomers(int userid)

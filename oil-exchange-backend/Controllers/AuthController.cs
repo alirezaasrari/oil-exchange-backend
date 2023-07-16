@@ -99,7 +99,7 @@ namespace oil_exchange_backend.Controllers
         }
 
         [HttpPost("forget-password")]
-        public async Task<IActionResult> ForgetPassword(string phone)
+        public async Task<ActionResult<string>> ForgetPassword(string phone)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Phonenumber == phone);
             try
@@ -108,10 +108,11 @@ namespace oil_exchange_backend.Controllers
                 {
                     return BadRequest("user not found!");
                 }
-                user.Resetpasstoken = CreateRandomToken();
+                var Resetpasstoken = CreateRandomToken();
+                user.Resetpasstoken = Resetpasstoken;
                 user.Resetpasstokenexpire = DateTime.Now.AddDays(1);
                 await _Context.SaveChangesAsync();
-                return Ok("you can reset your password");
+                return Ok("you can reset your password by" + Resetpasstoken);
             }
             catch (Exception ex)
             {

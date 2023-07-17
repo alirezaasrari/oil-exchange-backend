@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using oil_exchange_backend.Context;
@@ -98,7 +99,7 @@ namespace oil_exchange_backend.Controllers
          
         }
 
-        [HttpPost("forget-password")]
+        [HttpPost("forget-password"),Authorize]
         public async Task<ActionResult<string>> ForgetPassword(string phone)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Phonenumber == phone);
@@ -112,7 +113,7 @@ namespace oil_exchange_backend.Controllers
                 user.Resetpasstoken = Resetpasstoken;
                 user.Resetpasstokenexpire = DateTime.Now.AddDays(1);
                 await _Context.SaveChangesAsync();
-                return Ok("you can reset your password by" + Resetpasstoken);
+                return Ok(Resetpasstoken);
             }
             catch (Exception ex)
             {
@@ -130,7 +131,7 @@ namespace oil_exchange_backend.Controllers
             
         }
 
-        [HttpPost("Reset-password")]
+        [HttpPost("Reset-password"),Authorize]
         public async Task<IActionResult> ResetPassword(ResetPass request)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Resetpasstoken == request.Token);

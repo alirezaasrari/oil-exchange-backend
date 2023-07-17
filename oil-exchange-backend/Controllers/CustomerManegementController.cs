@@ -41,7 +41,7 @@ namespace oil_exchange_backend.Controllers
                 };
                 _dataContext.Customermanagement.Add(customerManegemant);
                 await _dataContext.SaveChangesAsync();
-                return Ok("successfully");
+                return Ok();
             }
             catch (Exception ex)
             {

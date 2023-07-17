@@ -14,7 +14,7 @@ namespace oil_exchange_backend.Controllers
         {
             _Context = Context;
         }
-        [HttpGet("historycheck")]
+        [HttpGet("historycheck/{plaquenumber}")]
         public async Task<ActionResult<List<CustomerManagement>>> HistoryCheck(string plaquenumber)
         {
             try

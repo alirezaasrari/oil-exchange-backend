@@ -129,7 +129,7 @@ namespace oil_exchange_backend.Controllers
             
         }
 
-        [HttpGet("getstorename"),Authorize]
+        [HttpGet("getstorename")]
         public async Task<ActionResult<int>> GetStoreName(int request)
         {
             var idcheck = await _Context.Users.FirstOrDefaultAsync(a => a.Id == request);

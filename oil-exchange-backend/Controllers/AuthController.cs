@@ -99,7 +99,7 @@ namespace oil_exchange_backend.Controllers
          
         }
 
-        [HttpPost("forget-password"),Authorize]
+        [HttpPost("forget-password")]
         public async Task<ActionResult<string>> ForgetPassword(string phone)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Phonenumber == phone);
@@ -131,7 +131,7 @@ namespace oil_exchange_backend.Controllers
             
         }
 
-        [HttpPost("Reset-password"),Authorize]
+        [HttpPost("Reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPass request)
         {
             var user = await _Context.Users.FirstOrDefaultAsync(u => u.Resetpasstoken == request.Token);
@@ -141,16 +141,13 @@ namespace oil_exchange_backend.Controllers
                 {
                     return BadRequest("invalid token");
                 }
-                CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
-                if (user is not null)
-                {
+                    CreatePasswordHash(request.Pass, out byte[] passwordHash, out byte[] passwordSalt);
                     user.PassHash = passwordHash;
                     user.PassSalt = passwordSalt;
                     user.Resetpasstoken = null;
                     user.Resetpasstokenexpire = null;
-                }
-                await _Context.SaveChangesAsync();
-                return Ok("password successfully changed");
+                    await _Context.SaveChangesAsync();               
+                    return Ok();
             }
             catch (Exception ex)
             {

@@ -77,7 +77,6 @@ namespace oil_exchange_backend.Controllers
                                 return BadRequest("password is wrong");
                             }
                     var token = Createtoken(user);
-                    user.Token = token;
                     await _Context.SaveChangesAsync();
                     return Ok(token);
                 }

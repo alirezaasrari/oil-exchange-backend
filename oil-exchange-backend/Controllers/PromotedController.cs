@@ -20,27 +20,59 @@ namespace oil_exchange_backend.Controllers
         [HttpPost("promote"), Authorize]
         public async Task<IActionResult> Promote (PromotedDto request)
         {
-            Promoted promoted = new() 
+            try
             {
-                Userid = request.Userid,
-                Promoteddate = DateTime.Now,
-            };
+                Promoted promoted = new()
+                {
+                    Userid = request.Userid,
+                    Promoteddate = DateTime.Now,
+                };
 
-             _context.Promotedusers.Add(promoted);
-            await _context.SaveChangesAsync();
-            return Ok();
+                _context.Promotedusers.Add(promoted);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                };
+            } 
         }
         [HttpGet("get-promoted"), Authorize]
         public async Task<ActionResult<string>> DatePromoted(int request)
         {
-            var user = await _context.Promotedusers.FirstOrDefaultAsync(e => e.Userid == request);
-            if (user is null)
+            
+            try
             {
-                return BadRequest();
+                var user = await _context.Promotedusers.FirstOrDefaultAsync(e => e.Userid == request);
+                if (user is null)
+                {
+                    return BadRequest();
+                }
+                var date = user.Promoteddate;
+                return Ok(date.ToString());
             }
-            var date = user.Promoteddate;
-            return Ok(date.ToString());
+            catch (Exception ex)
+            {
 
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                };
+            }
         }
     }
 }

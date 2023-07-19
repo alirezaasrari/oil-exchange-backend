@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using oil_exchange_backend.UserService;
 
 var myAllowSpecificOrigins = "_mySpecificOrigins";
 
@@ -17,6 +18,8 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddSwaggerGen(
     option =>
     {

@@ -6,7 +6,6 @@
         public DateTime Registereddate { get; set; } = DateTime.Now;
         public byte[] PassHash { get; set; } = new byte[32];
         public byte[] PassSalt { get; set; } = new byte[32];
-        public string? Token { get; set; } = string.Empty;
         public string Phonenumber { get; set; } = string.Empty;
         public string Storename { get; set; } = string.Empty;
         public string? Resetpasstoken { get; set; } = string.Empty;

@@ -4,6 +4,7 @@ using oil_exchange_backend.Models.ViewModels;
 using oil_exchange_backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using oil_exchange_backend.UserService;
 
 namespace oil_exchange_backend.Controllers
 {
@@ -12,9 +13,12 @@ namespace oil_exchange_backend.Controllers
     public class StoreController : Controller
     {
         private readonly DataContext _Context;
-        public StoreController(DataContext Context)
+        private readonly IUserService _UserService;
+
+        public StoreController(DataContext Context, IUserService userService)
         {
             _Context = Context;
+            _UserService = userService;
         }
         [HttpPost("addtostore"), Authorize]
         public async Task<ActionResult<StoreManagement>> AddToStore(StoreManagementDto request)
@@ -141,16 +145,10 @@ namespace oil_exchange_backend.Controllers
             return Ok(storename);
         }
 
-        [HttpGet("get-userid"),Authorize]
-        public async Task<ActionResult<int>> GetUserid(string token)
+        [HttpGet("get-userid"), Authorize]
+        public ActionResult<int> GetUserid()
         {
-            var tokencheck = await _Context.Users.FirstOrDefaultAsync(a => a.Token == token);
-            if (tokencheck == null)
-            {
-                return NotFound("user doesnt exist");
-            }
-            var userid = tokencheck.Id;
-            return Ok(userid);
+            return Ok(_UserService.GetUserId());
         }
     }
 }

@@ -55,10 +55,10 @@ namespace oil_exchange_backend.Controllers
                 var user = await _context.Promotedusers.FirstOrDefaultAsync(e => e.Userid == request);
                 if (user is null)
                 {
-                    return BadRequest();
+                    return Ok();
                 }
                 var date = user.Promoteddate;
-                return Ok(date.ToString());
+                return Ok(date);
             }
             catch (Exception ex)
             {
@@ -73,6 +73,34 @@ namespace oil_exchange_backend.Controllers
                     return BadRequest("bad request");
                 };
             }
+        }
+        [HttpDelete("remove")]
+        public async Task<ActionResult> Remove(int request)
+        {
+            try
+            {
+                var req = await _context.Promotedusers.FirstOrDefaultAsync(n => n.Userid == request);
+                if (req != null)
+                {
+                    _context.Remove(req);
+                    _context.SaveChanges();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                var ineerexception = ex.InnerException;
+                if (ineerexception != null)
+                {
+                    return BadRequest(ineerexception.Message);
+                }
+                else
+                {
+                    return BadRequest("bad request");
+                };
+            }
+            
         }
     }
 }

@@ -74,7 +74,7 @@ namespace oil_exchange_backend.Controllers
                 };
             }
         }
-        [HttpDelete("remove")]
+        [HttpDelete("remove"), Authorize]
         public async Task<ActionResult> Remove(int request)
         {
             try

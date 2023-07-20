@@ -83,7 +83,7 @@ namespace oil_exchange_backend.Controllers
                 if (req != null)
                 {
                     _context.Remove(req);
-                    _context.SaveChanges();
+                   await _context.SaveChangesAsync();
                 }
                 return Ok();
             }
